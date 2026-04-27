@@ -74,6 +74,18 @@ class LogBuffer:
 class LogGenerator(Thread):
     # TODO:
     pass
+def __init__(self, buffer, log_count):
+        super().__init__(name="LogGenerator")
+        self.buffer = buffer
+        self.log_count = log_count
+
+def run(self):
+        for i in range(1, self.log_count + 1):
+            # Simulate log generation with random delay
+            time.sleep(random.uniform(0.1, 0.5))
+            log_msg = f"LOG-{i:03d} | Timestamp: {time.strftime('%H:%M:%S')} | Level: INFO | Message: System event #{i}"
+            self.buffer.write_log(log_msg)
+        print(f"[{current_thread().name}] Finished generating {self.log_count} logs.")
 
 class LogArchiver(Thread):
     # TODO:
