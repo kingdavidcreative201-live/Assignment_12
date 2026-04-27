@@ -110,12 +110,20 @@ def main():
     gen = LogGenerator(buffer, LOG_COUNT)
     arc = LogArchiver(buffer, LOG_COUNT)
     
+    print("=" * 60)
+    print("Starting Log Management System")
+    print(f"Total logs to process: {LOG_COUNT}")
+    print("=" * 60 + "\n")
+
+
     gen.start()
     arc.start()
     
     gen.join()
     arc.join()
+    print("\n" + "=" * 60)
     print("\nLog Maintenance Complete.")
+    print("=" * 60)
 
 if __name__ == "__main__":
     main()
