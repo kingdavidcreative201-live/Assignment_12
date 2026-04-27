@@ -35,6 +35,19 @@ class LogBuffer:
     def write_log(self, log_msg):
         # TODO: 
         pass
+        with self.condition:
+            # Wait while buffer is not empty (archiver hasn't read yet)
+            while not self.is_empty:
+                print(f"  [{current_thread().name}] Buffer full, waiting...")
+                self.condition.wait()
+            
+            # Write the log
+            print(f"  [{current_thread().name}] Writing: {log_msg}")
+            self.current_log = log_msg
+            self.is_empty = False
+            
+            # Notify the archiver that data is ready
+            self.condition.notify()
 
     def archive_log(self):
         # TODO: 
