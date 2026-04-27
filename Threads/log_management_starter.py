@@ -52,6 +52,23 @@ class LogBuffer:
     def archive_log(self):
         # TODO: 
         pass
+        with self.condition:
+            # Wait while buffer is empty (generator hasn't written yet)
+            while self.is_empty:
+                print(f"  [{current_thread().name}] Buffer empty, waiting...")
+                self.condition.wait()
+            
+            # Read and process the log
+            log_msg = self.current_log
+            print(f"  [{current_thread().name}] Archiving: {log_msg}")
+            
+            # Clear the buffer
+            self.current_log = None
+            self.is_empty = True
+            
+            # Notify the generator that buffer is clear
+            self.condition.notify()
+            return log_msg
 
 
 class LogGenerator(Thread):
