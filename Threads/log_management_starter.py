@@ -90,6 +90,17 @@ def run(self):
 class LogArchiver(Thread):
     # TODO:
     pass
+def __init__(self, buffer, log_count):
+        super().__init__(name="LogArchiver")
+        self.buffer = buffer
+        self.log_count = log_count
+
+def run(self):
+        for _ in range(self.log_count):
+            # Simulate archiving with random delay
+            time.sleep(random.uniform(0.1, 0.5))
+            self.buffer.archive_log()
+        print(f"[{current_thread().name}] Finished archiving {self.log_count} logs.")
 
 def main():
     LOG_COUNT = 5
