@@ -4,22 +4,16 @@ from threading import Thread, current_thread, Condition
 
 '''
 # TODO Explain what is condition used for?
-A condition is a synchronizatio primitive that allows one 
-or more threads to wait until they are notified by another thread.
-It combines a lock with the ability to pause thread execution (wait)
-and wake up waiting threads (notify).
-In this log managerr, the condition coordinates the LogGenerator and Logarchiver:
+A Condition is a synchronization primitive that allows one or more threads 
+to wait until they are notified by another thread. It combines a Lock with 
+the ability to pause thread execution (wait) and wake up waiting threads (notify).
+In this log manager, the Condition coordinates the LogGenerator and LogArchiver:
 - The generator waits when the buffer is full (not empty)
 - The archiver waits when the buffer is empty
-- notify() wakes the other thread when the state changes.
+- notify() wakes the other thread when the state changes
 
 # TODO Explain how does is_empty maintain the state management?
 is_empty is a boolean flag that tracks the state of the shared buffer:
-- True  = buffer is empty, ready for generator to write
-- False = buffer has a log, ready for archiver to read
-It acts as a traffic signal: generator checks is_empty before writing,
-archiver checks not is_empty before reading. This prevents race conditions
-and ensures strict alternation between write and read operations.is_empty is a boolean flag that tracks the state of the shared buffer:
 - True  = buffer is empty, ready for generator to write
 - False = buffer has a log, ready for archiver to read
 It acts as a traffic signal: generator checks is_empty before writing,
@@ -33,8 +27,7 @@ class LogBuffer:
         self.condition = Condition()
 
     def write_log(self, log_msg):
-        # TODO: 
-        pass
+        """Producer method: write a log to the buffer."""
         with self.condition:
             # Wait while buffer is not empty (archiver hasn't read yet)
             while not self.is_empty:
@@ -50,8 +43,7 @@ class LogBuffer:
             self.condition.notify()
 
     def archive_log(self):
-        # TODO: 
-        pass
+        """Consumer method: read and process a log from the buffer."""
         with self.condition:
             # Wait while buffer is empty (generator hasn't written yet)
             while self.is_empty:
@@ -72,14 +64,14 @@ class LogBuffer:
 
 
 class LogGenerator(Thread):
-    # TODO:
-    pass
-def __init__(self, buffer, log_count):
+    """Thread that generates log entries."""
+    
+    def __init__(self, buffer, log_count):
         super().__init__(name="LogGenerator")
         self.buffer = buffer
         self.log_count = log_count
 
-def run(self):
+    def run(self):
         for i in range(1, self.log_count + 1):
             # Simulate log generation with random delay
             time.sleep(random.uniform(0.1, 0.5))
@@ -87,20 +79,22 @@ def run(self):
             self.buffer.write_log(log_msg)
         print(f"[{current_thread().name}] Finished generating {self.log_count} logs.")
 
+
 class LogArchiver(Thread):
-    # TODO:
-    pass
-def __init__(self, buffer, log_count):
+    """Thread that archives log entries."""
+    
+    def __init__(self, buffer, log_count):
         super().__init__(name="LogArchiver")
         self.buffer = buffer
         self.log_count = log_count
 
-def run(self):
+    def run(self):
         for _ in range(self.log_count):
             # Simulate archiving with random delay
             time.sleep(random.uniform(0.1, 0.5))
             self.buffer.archive_log()
         print(f"[{current_thread().name}] Finished archiving {self.log_count} logs.")
+
 
 def main():
     LOG_COUNT = 5
@@ -114,16 +108,16 @@ def main():
     print("Starting Log Management System")
     print(f"Total logs to process: {LOG_COUNT}")
     print("=" * 60 + "\n")
-
-
+    
     gen.start()
     arc.start()
     
     gen.join()
     arc.join()
     print("\n" + "=" * 60)
-    print("\nLog Maintenance Complete.")
+    print("Log Maintenance Complete.")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()
